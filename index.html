@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gorilla Marketing & Email Campaigns</title>
+  
+<link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <nav>
+    <div style="font-weight:bold; font-size:1.2rem;" class="header-link" > <a href="https://www.draydev.com/">Your All In One Expert</a></div>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="https://www.draydev.com/" target="_blank">Portfolio</a>
+      <a href="#services">Services</a>
+      <a href="#talk-growth">Let’s Talk Growth</a>
+    </div>
+    <div class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('active');">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </nav>
+
+  <header id="home">
+    <h1>Let’s Get You More Clients</h1>
+    <p>I help businesses convert clicks into clients with strategy-driven email campaigns, landing pages, and Shopify
+      solutions.</p>
+    <div style="margin-top: 30px;">
+      <a href="https://calendly.com/thedraydev" target="_blank"><button class="book">Book A Consultation</button></a>
+      
+    </div>
+  </header>
+
+  <section id="services">
+    <h2>What I Do Best</h2>
+    <p>I build systems that bring in leads, drive conversions, & simplify your marketing. <div>All tailored to
+      your business goals.</div> </p> 
+    <div class="services">
+      <div class="card">
+        <h3>Email Marketing</h3>
+        <p>Campaigns that nurture leads, boost retention, and drive revenue with precise targeting and automation.</p>
+      </div>
+      <div class="card">
+        <h3>Email Design</h3>
+        <p>Beautiful, responsive emails designed to convert. Built to match your brand and engage your audience.</p>
+      </div>
+      <div class="card">
+        <h3>Landing Pages</h3>
+        <p>Conversion-focused pages that capture leads and guide visitors toward the next step in your funnel.</p>
+      </div>
+      <div class="card">
+        <h3>Shopify Development</h3>
+        <p>Optimized Shopify stores that look great, load fast, and convert traffic into sales with proven UX
+          strategies.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="why-us">
+      <div class="why-header">
+    <h2>Why Choose Me</h2>
+    <img src="images/Dray-Dev.png" alt="Dray Scott" class="profile-pic"/>
+    </div>
+    <div class="services">
+      <div class="card">
+        <h3>Custom Strategy</h3>
+        <p>No templates or guesswork. Just tailored plans that fit your goals and audience.</p>
+      </div>
+      <div class="card">
+        <h3>Full-Funnel Expertise</h3>
+        <p> I connect every piece. From your emails, to your landing pages, & to your sales flow.</p>
+      </div>
+      <div class="card">
+        <h3>Real Results</h3>
+        <p>Your mission is simple: measurable growth, not marketing fluff.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="card">
+        <h3>Step 1: Discovery</h3>
+        <p>We start with a quick chat to understand your business, goals, and where you want to grow.</p>
+      </div>
+      <div class="card">
+        <h3>Step 2: Strategize</h3>
+        <p>We craft a custom growth plan. Showing how web development, email, design, and automation can scale your results.</p>
+      </div>
+      <div class="card">
+        <h3>Step 3: Execute</h3>
+        <p>We launch your campaigns or systems, test performance, and keep optimizing for maximum ROI.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="talk-growth" style="background:#f3f4f6;">
+    <h2>Let’s Talk Growth</h2>
+    <p style="max-width:600px; margin:10px auto 30px; color:#555;">
+      Tell us a bit about your business — and we’ll design a personalized strategy
+      to help you attract more clients and scale smarter.
+    </p>
+    <form id="growthForm"
+      style="max-width:400px; margin:0 auto; background:#fff; padding:30px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Your Email" required />
+      <select id="businessType" required>
+        <option value="">Select Your Business Type</option>
+        <option>Local Service Provider</option>
+        <option>Health & Wellness</option>
+        <option>Beauty & Cosmetics</option>
+        <option>Retail / E-Commerce</option>
+        <option>Restaurant / Food</option>
+        <option>Independent Professional</option>
+      </select>
+      <button class="book" type="submit">Learn More</button>
+    </form>
+  </section>
+
+  <section style="background:#f2cd4b">
+    <h2 class="">Your Next 30 Days Could Look Very Different.</h2>
+    <p>Let’s build your growth system. One that runs even when you’re not.</p>
+    <div style="margin-top:30px;">
+      <a href="https://calendly.com/thedraydev" target="_blank"><button class="book">Book My Consultation</button></a>
+    </div>
+  </section>
+
+  <footer id="contact"> 
+    <p><a href="https://www.draydev.com/" target="_blank">Dray Scott</a>   </p>
+    <div id="rights">© 2025 All rights reserved.</div>
+    <div class="footer-links">
+      <a href="#home">Home</a>•
+      <a href="https://www.draydev.com/" target="_blank">Portfolio</a>
+      <a href="#services">Services</a>•
+      <a href="#talk-growth">Let’s Talk Growth</a>•
+      
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const form = document.getElementById('growthForm');
+      const nameEl = document.getElementById('name');
+      const emailEl = document.getElementById('email');
+      const btEl = document.getElementById('businessType');
+
+      // Optional: auto-select from ?type=restaurant, ?type=ecommerce, etc.
+      (function preselectFromQuery() {
+        const params = new URLSearchParams(location.search);
+        const type = (params.get('type') || '').toLowerCase();
+        if (!type) return;
+        for (const opt of btEl.options) {
+          if (opt.value && opt.textContent.toLowerCase().includes(type)) {
+            btEl.value = opt.value;
+            break;
+          }
+        }
+      })();
+
+      function getUTMs() {
+        const p = new URLSearchParams(location.search);
+        return {
+          source: p.get('utm_source'),
+          medium: p.get('utm_medium'),
+          campaign: p.get('utm_campaign'),
+          content: p.get('utm_content'),
+          term: p.get('utm_term')
+        };
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+
+        const name = (nameEl.value || '').trim();
+        const email = (emailEl.value || '').trim();
+        const businessType = btEl.value;
+
+        if (!email || !businessType) {
+          alert('Please enter your email and select your business type.');
+          submitBtn.disabled = false;
+          return;
+        }
+
+        try {
+          const resp = await fetch('/.netlify/functions/klaviyo-subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name,
+              email,
+              businessType,
+              source: 'Landing Page',
+              utm: getUTMs()
+            })
+          });
+
+          if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            console.error('Subscribe error:', err);
+            throw new Error('Subscription failed');
+          }
+
+          form.innerHTML = `
+          <h3>Thanks, ${name ? name : 'friend'}! 🎉</h3>
+          <p>Got your info! Keep an eye on your inbox. I’ll send some ideas made for your <strong>${businessType}</strong> business.</p>
+        `;
+
+          // Optional: pixel conversion
+          try { if (typeof fbq === 'function') fbq('trackCustom', 'Lead', { businessType }); } catch (_) { }
+          try { if (window.gtag) gtag('event', 'lead', { businessType }); } catch (_) { }
+
+        } catch (error) {
+          alert('Something went wrong subscribing you. Please try again.');
+          submitBtn.disabled = false;
+        }
+      });
+    })();
+  </script>
+
+
+
+</body>
+
+</html>
