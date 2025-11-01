@@ -113,12 +113,12 @@
       <input type="email" id="email" placeholder="Your Email" required />
       <select id="businessType" required>
         <option value="">Select Your Business Type</option>
-        <option>Local Service Provider</option>
-        <option>Health & Wellness</option>
-        <option>Beauty & Cosmetics</option>
-        <option>Retail / E-Commerce</option>
-        <option>Restaurant / Food</option>
-        <option>Independent Professional</option>
+        <option value="Local Service Provider">Local Service Provider</option>
+        <option value="Health & Wellness">Health & Wellness</option>
+        <option value="Beauty & Cosmetics" >Beauty & Cosmetics</option>
+        <option value="Retail/E-Commerce">Retail/E-Commerce</option>
+        <option value="Restaurant/Food">Restaurant/Food</option>
+        <option value="Independent Professional">Independent Professional</option>
       </select>
       <button class="book" type="submit">Learn More</button>
     </form>
@@ -211,9 +211,31 @@
           }
 
           form.innerHTML = `
-          <h3>Thanks, ${name ? name : 'friend'}! 🎉</h3>
-          <p>Got your info! Keep an eye on your inbox. I’ll send some ideas made for your <strong>${businessType}</strong> business.</p>
-        `;
+  <div style="
+    text-align:center;
+    background:#fff;
+    padding:30px 25px;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    max-width:500px;
+    margin:0 auto;
+    border:1px solid #e5e7eb;
+  ">
+    <h3 style="font-size:1.4rem; font-weight:700; margin-bottom:10px;">
+      Thanks, ${name ? name : 'friend'}! 🎉
+    </h3>
+    <p style="color:#444; font-size:1rem; line-height:1.6;">
+      Got your info! Keep an eye on your inbox — I’ll send a few ideas crafted just for your 
+      <strong>${businessType}</strong> business.
+    </p>
+    
+  </div>
+`;
+
+          try { if (typeof fbq === 'function') fbq('trackCustom', 'Lead', { businessType }); } catch (_) { }
+          try { if (window.gtag) gtag('event', 'lead', { businessType }); } catch (_) { }
+
+
 
           // Optional: pixel conversion
           try { if (typeof fbq === 'function') fbq('trackCustom', 'Lead', { businessType }); } catch (_) { }
