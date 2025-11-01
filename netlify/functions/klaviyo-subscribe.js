@@ -5,7 +5,7 @@ const ok = {
   'Access-Control-Allow-Methods': 'POST,OPTIONS'
 };
 
-export async function handler(event) {
+exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: ok, body: 'ok' };
   }
@@ -43,4 +43,4 @@ export async function handler(event) {
   } catch (e) {
     return { statusCode: 500, headers: ok, body: JSON.stringify({ error: 'Server error' }) };
   }
-}
+};
