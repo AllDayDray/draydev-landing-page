@@ -204,11 +204,17 @@
             })
           });
 
-          if (!resp.ok) {
-            const err = await resp.json().catch(() => ({}));
-            console.error('Subscribe error:', err);
-            throw new Error('Subscription failed');
+          const text = await resp.text();
+          console.log('Subscribe response:', resp.status, text);
+
+          if (!resp.ok || /"error":/.test(text)) {
+            alert(text || 'Something went wrong subscribing you. Please try again.');
+            submitBtn.disabled = false;
+            return;
           }
+
+
+        
 
           form.innerHTML = `
   <div style="
