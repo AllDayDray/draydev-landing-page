@@ -208,10 +208,16 @@
           console.log('Subscribe response:', resp.status, text);
 
           if (!resp.ok || /"error":/.test(text)) {
-            alert(text || 'Something went wrong subscribing you. Please try again.');
-            submitBtn.disabled = false;
+            if (text.includes('duplicate_profile')) {
+              alert('You’re already on the list — check your inbox!');
+              form.reset();
+            } else {
+              alert('Something went wrong subscribing you. Please try again.');
+              submitBtn.disabled = false;
+            }
             return;
           }
+
 
 
         
