@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Dray Is Here</title>
-  
+  <link rel="icon" href="/favicon.ico" />
 <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -175,8 +176,49 @@
         };
       }
 
+      // --- Phone input: format + validate (US) ---
+      const phoneInput = document.getElementById('phone');
+      const phoneMsg = document.createElement('div');
+      phoneMsg.className = 'helper';
+      phoneInput.after(phoneMsg);
+
+      function digitsOnly(v) { return String(v).replace(/\D/g, ''); }
+      function formatUS(d) { // d = digits only (max 10)
+        d = d.slice(0, 10);
+        if (d.length < 4) return d;
+        if (d.length < 7) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
+        return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+      }
+      function validUS(d) { // allow 10 digits (US) or 11 starting with 1
+        return d.length === 10 || (d.length === 11 && d.startsWith('1'));
+      }
+
+      phoneInput.addEventListener('input', () => {
+        const d = digitsOnly(phoneInput.value);
+        // Keep at most 11 digits typed; format first 10 for display
+        phoneInput.value = formatUS(d.slice(0, 10));
+        phoneMsg.textContent = '';
+      });
+
+      phoneInput.addEventListener('blur', () => {
+        const d = digitsOnly(phoneInput.value);
+        if (d && !validUS(d)) phoneMsg.textContent = 'Enter a valid 10-digit US number.';
+      });
+
+
+
+
+
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
+
+        const rawDigits = digitsOnly(form.phone.value);
+        if (form.phone.value && !validUS(rawDigits)) {
+          msg.textContent = 'Enter a valid 10-digit US number.';
+          submitBtn.disabled = false;
+          return;
+        }
+
 
         const submitBtn = form.querySelector('button[type="submit"]');
         submitBtn.disabled = true;

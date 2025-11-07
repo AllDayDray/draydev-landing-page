@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book Your Free Consultation | Dray Dev</title>
+  <meta name="description" content="Websites, landing pages, and email marketing built to fit your budget. Watch the intro video and book a free consultation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta property="og:title" content="Let’s Build What Fits You." />
+  <meta property="og:description" content="Websites, landing pages, and email systems for small businesses. Without the big-agency price tag." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://draydev.com/og-default.jpg" />
+  <meta name="theme-color" content="#f2cd4b" />
+  <style>
+    :root{
+      --accent:#f2cd4b;
+      --accent-2:#d90101;
+      --dark:#333333;
+      --bg:#f8fafc;
+      --muted:#6b7280;
+      --radius:18px;
+      --shadow:0 12px 30px rgba(0,0,0,.08);
+      --border:#e5e7eb;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--dark);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 56px}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:8px 12px;box-shadow:var(--shadow)}
+    .badge .dot{width:8px;height:8px;border-radius:999px;background:var(--accent-2)}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .logo{font-weight:800;letter-spacing:.3px}
+    .card{background:#f2cd4b;border:1px solid var(--border);border-radius:calc(var(--radius) + 6px);box-shadow:var(--shadow);padding:28px}
+    .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:start}
+    h1{font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0 0 10px}
+    .sub{color:var(--muted);font-size:clamp(14px,2.2vw,16px);margin:0 0 18px}
+    .video-wrap{position:relative;width:100%;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:#000;box-shadow:var(--shadow)}
+    .video-wrap::before{content:"";display:block;padding-top:56.25%;}
+    .video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    .trust{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+    .pill{background:#111827;color:#f9fafb;border-radius:999px;padding:6px 10px;font-size:12px;opacity:.9}
+    .form-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+    .form-title{font-weight:700;margin:4px 0 8px}
+    .note{font-size:13px;color:var(--muted);margin-top:8px}
+    .note .calendly{color:#000;text-decoration:underline;cursor:pointer}
+    label{display:block;font-size:13px;margin:10px 0 6px}
+    input, select{width:100%;padding:12px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;font-size:14px;outline:none}
+    input:focus, select:focus{border-color:#cbd5e1;box-shadow:0 0 0 4px rgba(242,205,75,.15)}
+    .cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--accent-2);color:#fff;border:none;border-radius:12px;padding:12px 16px;font-weight:700;text-decoration:none;box-shadow:0 8px 20px rgba(217,1,1,.18);width:100%;cursor:pointer}
+    .cta:hover{text-decoration:none;  color: #000; transition: .3s;  box-shadow:0 12px 30px rgba(217,1,1,.25)}
+    .cta[disabled]{opacity:.6;cursor:not-allowed}
+    
+    .helper{font-size:12px;color:var(--muted);margin-top:6px}
+    .divider{height:1px;background:var(--border);margin:18px 0}
+    footer{margin-top:28px;text-align:center;color:var(--muted);font-size:13px}
+    .hidden{display:none}
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr;gap:18px}
+    }
+  </style>
+  <!-- Optional tracking snippets (Meta Pixel / Google Ads) can go here -->
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">Dray Dev</div>
+      <div class="badge"><span class="dot"></span><span>Free consultation</span></div>
+    </header>
+
+    <section class="card hero">
+      <div>
+        <h1>Let’s Build What Fits You.</h1>
+        <p class="sub">Websites, landing pages, & email systems built for small businesses. <span class="sub">Without the big-agency price tag.</span></p>
+        <div class="video-wrap" aria-label="Intro video">
+        <!-- Updated autoplay + loop YouTube embed -->
+        <iframe width="560" height="315"
+          src="https://www.youtube.com/embed/jTAgau867Jk?si=H9jXF2CRydZUGP2x&autoplay=1&mute=1&loop=1&playlist=jTAgau867Jk"
+          title="YouTube video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+        </iframe>
+
+        </div>
+        <div class="trust">
+          <span class="pill">No pressure</span>
+          <span class="pill">Budget-friendly options</span>
+          <span class="pill">Quick 15‑min call</span>
+        </div>
+      </div>
+
+      <aside class="form-card">
+        <div class="form-title">Book Your Free Consultation</div>
+        <div class="note">Tell me what you need and I’ll tailor options to your budget.</div>
+        <div class="divider"></div>
+
+        <!-- Netlify-friendly static form + JS enhancement -->
+        <form id="lead-form" name="book-consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="book-consultation" />
+          <p class="hidden">
+            <label>Don’t fill this out: <input name="bot-field" /></label>
+          </p>
+
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="Full name" required />
+
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+
+          <label for="phone">Phone Number</label>
+          <input id="phone" name="phone" type="tel" placeholder="(555) 555‑5555" />
+
+          <label for="primary_need">Primary Need</label>
+          <select id="primary_need" name="primary_need" required>
+            <option value="" disabled selected>Select an option</option>
+            <option>New or Updated Website</option>
+            <option>Landing Page</option>
+            <option>Email Template(s)</option>
+            <option>Email Marketing</option>
+          </select>
+
+          <div class="helper">No spam. Just a quick follow‑up with options.</div>
+
+          <div class="divider"></div>
+          <button id="submitBtn" class="cta" type="submit">Book Your Free Consultation</button>
+          <div id="msg" class="helper" role="status" aria-live="polite"></div>
+        </form>
+
+        <p class="note">Prefer to choose a time right now? <a href="https://calendly.com/thedraydev" target="_blank" rel="nofollow noopener"><span class="calendly">Open Calendly</span></a>.</p>
+      </aside>
+    </section>
+
+    <footer>
+      <p>© <span id="year"></span> Dray Scott <div>All Rights Reserved.</div> </p>
+    </footer>
+  </div>
+
+  <script>
+    // Simple helper: URL-encode a form object
+    function encode(data){
+      return Object.keys(data).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key])).join('&');
+    }
+
+    (function(){
+      const form = document.getElementById('lead-form');
+      const submitBtn = document.getElementById('submitBtn');
+      const msg = document.getElementById('msg');
+      const CALENDLY_REDIRECT = "https://calendly.com/thedraydev";
+
+      // OPTIONAL: If you have a Netlify Function or API to forward to Klaviyo, set it here.
+      // Example: const KLAVIYO_ENDPOINT = "/.netlify/functions/klaviyo-subscribe";
+      const KLAVIYO_ENDPOINT = ""; // leave empty if you don't have one yet
+
+      form.addEventListener('submit', async function(e){
+        e.preventDefault();
+        msg.textContent = "";
+        submitBtn.disabled = true;
+
+        const payload = {
+          "form-name": form.getAttribute("name"),
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          phone: form.phone.value.trim(),
+          primary_need: form.primary_need.value
+        };
+
+        try {
+          // 1) Netlify Forms submission (static capture)
+          await fetch("/", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: encode(payload)
+          });
+
+          // 2) Optional: Forward to your API / Klaviyo function if provided
+          if (KLAVIYO_ENDPOINT){
+            await fetch(KLAVIYO_ENDPOINT, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: payload.name,
+                email: payload.email,
+                phone: payload.phone,
+                primaryNeed: payload.primary_need
+              })
+            });
+          }
+
+          // 3) Redirect to Calendly
+          window.location.href = CALENDLY_REDIRECT;
+        } catch (err){
+          console.error(err);
+          msg.textContent = "Something went wrong. Please try again, or book directly via Calendly.";
+          submitBtn.disabled = false;
+        }
+      });
+
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
