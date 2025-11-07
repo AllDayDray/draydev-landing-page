@@ -1,5 +1,7 @@
 // Build Better Blueprint / Freelance Ad Form → Klaviyo Integration
-// Updated to include primary_need + phone formatting
+// ✅ Compatible with Netlify’s CommonJS runtime
+
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const KLAVIYO_KEY = process.env.KLAVIYO_PRIVATE_KEY;
 const LIST_ID = process.env.KLAVIYO_LIST_ID;
@@ -11,7 +13,7 @@ const ok = {
   'Access-Control-Allow-Methods': 'POST,OPTIONS'
 };
 
-export async function handler(event) {
+exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: ok, body: 'ok' };
   }
@@ -24,12 +26,12 @@ export async function handler(event) {
     const body = JSON.parse(event.body || '{}');
     const name = body.name?.trim() || '';
     const email = body.email?.trim() || '';
-    let phone = (body.phone || '').trim();
     const primaryNeed = body.primary_need?.trim() || '';
+    let phone = (body.phone || '').trim();
 
-    // ✅ Fix phone format for Klaviyo (E.164)
+    // ✅ Format phone for Klaviyo (E.164 format)
     if (phone && !phone.startsWith('+1')) {
-      phone = '+1' + phone.replace(/\D/g, ''); // strip non-digits and add +1
+      phone = '+1' + phone.replace(/\D/g, '');
     }
 
     if (!email) {
@@ -40,6 +42,7 @@ export async function handler(event) {
       };
     }
 
+    // Create or update profile in Klaviyo
     const payload = {
       data: {
         type: 'profile',
@@ -55,7 +58,6 @@ export async function handler(event) {
       }
     };
 
-    // Create / update profile
     const res = await fetch('https://a.klaviyo.com/api/profiles/', {
       method: 'POST',
       headers: {
@@ -98,12 +100,12 @@ export async function handler(event) {
       body: JSON.stringify({ ok: true })
     };
 
-  } catch (error) {
-    console.error('Function error:', error);
+  } catch (err) {
+    console.error('Function error:', err);
     return {
       statusCode: 500,
       headers: ok,
-      body: JSON.stringify({ error: 'Server error', details: error.message })
+      body: JSON.stringify({ error: 'Server error', details: err.message })
     };
   }
-}
+};
