@@ -173,7 +173,7 @@
 
         const name = (nameEl?.value || '').trim();
         const email = (emailEl?.value || '').trim();
-        const businessType = btEl?.value || '';
+        const businessType = (btEl?.value || '').trim();
 
         if (!email || !businessType) {
           alert('Please enter your email and select your business type.');
@@ -181,43 +181,43 @@
           return;
         }
 
+        // Build payload (send BOTH keys + force BBB routing)
+        const payload = {
+          list: 'bbb',                 // <— tells the function “this is BBB”
+          name,
+          email,
+          businessType,                // camelCase (new)
+          business_type: businessType, // snake_case (legacy segments)
+          source: 'Landing Page',
+          utm: getUTMs()
+        };
+
         try {
           const resp = await fetch('/.netlify/functions/klaviyo-subscribe', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name,
-              email,
-              businessType,           // -> BBB segmentation
-              source: 'Landing Page', // helpful profile context
-              utm: getUTMs()
-            })
+            body: JSON.stringify(payload)
           });
 
           const text = await resp.text();
-          // Try parse; if not JSON, fall back
           let data = {};
           try { data = JSON.parse(text); } catch { }
 
-          if (resp.ok && (data.ok === true)) {
+          if (resp.ok && data.ok === true) {
             form.innerHTML = `
             <div style="
-              text-align:center;
-              background:#fff;
-              padding:30px 25px;
-              border-radius:16px;
-              box-shadow:0 4px 15px rgba(0,0,0,0.08);
-              max-width:520px;
-              margin:0 auto;
+              text-align:center;background:#fff;padding:30px 25px;border-radius:16px;
+              box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;
               border:1px solid #e5e7eb;">
-              <h3 style="font-size:1.4rem; font-weight:700; margin-bottom:10px;">
+              <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">
                 Thanks, ${name ? name : 'friend'}! 🎉
               </h3>
-              <p style="color:#444; font-size:1rem; line-height:1.6;">
-                You’re in. Check your inbox for ideas tailored to your
+              <p style="color:#444;font-size:1rem;line-height:1.6;">
+                You’re in. <strong>Check</strong> your inbox for ideas tailored to your
                 <strong>${businessType}</strong> business.
               </p>
             </div>`;
+            document.querySelector('html,body')?.scrollTo?.({ top: form.offsetTop - 40, behavior: 'smooth' });
             return;
           }
 
@@ -225,21 +225,17 @@
           if (text.includes('duplicate_profile')) {
             form.innerHTML = `
             <div style="
-              text-align:center;
-              background:#fff;
-              padding:30px 25px;
-              border-radius:16px;
-              box-shadow:0 4px 15px rgba(0,0,0,0.08);
-              max-width:520px;
-              margin:0 auto;
+              text-align:center;background:#fff;padding:30px 25px;border-radius:16px;
+              box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;
               border:1px solid #e5e7eb;">
-              <h3 style="font-size:1.4rem; font-weight:700; margin-bottom:10px;">
+              <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">
                 You’re already on the list ✅
               </h3>
-              <p style="color:#444; font-size:1rem; line-height:1.6;">
+              <p style="color:#444;font-size:1rem;line-height:1.6;">
                 I’ll follow up with next steps shortly.
               </p>
             </div>`;
+            document.querySelector('html,body')?.scrollTo?.({ top: form.offsetTop - 40, behavior: 'smooth' });
             return;
           }
 
@@ -255,6 +251,7 @@
       });
     });
   </script>
+
 </body>
 
 </html>
