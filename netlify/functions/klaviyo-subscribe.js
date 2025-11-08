@@ -1,52 +1,80 @@
-// Klaviyo Integration — BBB vs Freelance routing (no node-fetch needed)
+// Unified Klaviyo integration for BBB + Freelance
+// Uses global fetch (no node-fetch). CommonJS export.
 
 const KLAVIYO_KEY = process.env.KLAVIYO_PRIVATE_KEY;
-const LIST_ID_DEFAULT = process.env.KLAVIYO_LIST_ID_BBB || process.env.KLAVIYO_LIST_ID; // BBB fallback
-const LIST_ID_FREELANCE = process.env.KLAVIYO_LIST_ID_FREELANCE; // Freelance Ad List
+
+// Set BOTH of these on the drayishere.com site:
+const LIST_ID_BBB = process.env.KLAVIYO_LIST_ID_BBB || process.env.KLAVIYO_LIST_ID; // BBB default/fallback
+const LIST_ID_FREELANCE = process.env.KLAVIYO_LIST_ID_FREELANCE;                     // Freelance Ad List
+
 const REVISION = '2023-12-15';
 
-const ok = {
+const cors = {
   'Access-Control-Allow-Origin': 'https://drayishere.com',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Methods': 'POST,OPTIONS'
 };
 
-function pickListId(body, headers) {
+// ---- routing helpers ----
+function looksLikeFreelance(body, headers) {
   const flag = (body.list || '').toLowerCase();
-  if (flag === 'freelance' && LIST_ID_FREELANCE) return LIST_ID_FREELANCE;
-  if (flag === 'bbb' && LIST_ID_DEFAULT) return LIST_ID_DEFAULT;
-
-  const ref = headers.referer || headers.Referer || '';
-  if (/\/book\/?$/i.test(ref) && LIST_ID_FREELANCE) return LIST_ID_FREELANCE;
-
-  return LIST_ID_DEFAULT;
+  if (flag === 'freelance') return true;
+  if (body.primary_need) return true;
+  const ref = headers?.referer || headers?.Referer || '';
+  return /\/book\/?$/i.test(ref);
 }
 
+function pickListId(body, headers) {
+  if (looksLikeFreelance(body, headers)) return LIST_ID_FREELANCE;
+  return LIST_ID_BBB;
+}
+
+// ---- property builder ----
+function buildProperties(body, headers) {
+  const props = { source: undefined };
+
+  if (looksLikeFreelance(body, headers)) {
+    if (body.primary_need) props.primaryNeed = String(body.primary_need).trim();
+    props.source = 'Freelance Ad Form';
+  } else {
+    if (body.businessType) props.business_type = String(body.businessType).trim();
+    props.source = 'Build Better Blueprint Form';
+  }
+  return props;
+}
+
+// ---- Netlify handler ----
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers: ok, body: 'ok' };
+    return { statusCode: 200, headers: cors, body: 'ok' };
   }
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers: ok, body: JSON.stringify({ error: 'Method not allowed' }) };
+    return { statusCode: 405, headers: cors, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const name = (body.name || '').trim();
+
+    const name  = (body.name  || '').trim();
     const email = (body.email || '').trim();
-    const primaryNeed = (body.primary_need || '').trim();
-    let phone = (body.phone || '').trim();
-    if (!email) return { statusCode: 400, headers: ok, body: JSON.stringify({ error: 'Missing email' }) };
+    let   phone = (body.phone || '').trim();
+
+    if (!email) {
+      return { statusCode: 400, headers: cors, body: JSON.stringify({ error: 'Missing email' }) };
+    }
 
     // E.164 (US)
     if (phone) phone = '+1' + phone.replace(/\D/g, '');
 
     const LIST_ID = pickListId(body, event.headers);
     if (!LIST_ID) {
-      return { statusCode: 500, headers: ok, body: JSON.stringify({ error: 'No list configured' }) };
+      return { statusCode: 500, headers: cors, body: JSON.stringify({ error: 'List not configured' }) };
     }
 
-    // Create/update profile
+    // Build profile payload with correct properties
+    const properties = buildProperties(body, event.headers);
+
+    // Create / update profile
     const profileRes = await fetch('https://a.klaviyo.com/api/profiles/', {
       method: 'POST',
       headers: {
@@ -62,20 +90,18 @@ exports.handler = async (event) => {
             email,
             first_name: name || undefined,
             phone_number: phone || undefined,
-            properties: {
-              primaryNeed: primaryNeed || undefined,
-              source: body.list === 'freelance' ? 'Freelance Ad Form' : 'Build Better Blueprint Form'
-            }
+            properties
           }
         }
       })
     });
+
     const profileJson = await profileRes.json();
     if (!profileRes.ok) {
-      return { statusCode: profileRes.status, headers: ok, body: JSON.stringify({ error: 'Profile update failed', details: profileJson }) };
+      return { statusCode: profileRes.status, headers: cors, body: JSON.stringify({ error: 'Profile update failed', details: profileJson }) };
     }
 
-    // Add to chosen list
+    // Add profile to chosen list
     const relRes = await fetch(`https://a.klaviyo.com/api/lists/${LIST_ID}/relationships/profiles/`, {
       method: 'POST',
       headers: {
@@ -89,12 +115,17 @@ exports.handler = async (event) => {
 
     if (!relRes.ok) {
       const t = await relRes.text();
-      return { statusCode: relRes.status, headers: ok, body: JSON.stringify({ error: 'List add failed', details: t }) };
+      return { statusCode: relRes.status, headers: cors, body: JSON.stringify({ error: 'List add failed', details: t }) };
     }
 
-    return { statusCode: 200, headers: ok, body: JSON.stringify({ ok: true, list: LIST_ID }) };
+    return {
+      statusCode: 200,
+      headers: cors,
+      body: JSON.stringify({ ok: true, list: LIST_ID, profile: profileJson.data.id })
+    };
+
   } catch (err) {
     console.error('Function error:', err);
-    return { statusCode: 500, headers: ok, body: JSON.stringify({ error: 'Server error', details: err.message }) };
+    return { statusCode: 500, headers: cors, body: JSON.stringify({ error: 'Server error', details: err.message }) };
   }
 };
