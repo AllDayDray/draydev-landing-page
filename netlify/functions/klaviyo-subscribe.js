@@ -101,31 +101,49 @@ exports.handler = async (event) => {
       return { statusCode: profileRes.status, headers: cors, body: JSON.stringify({ error: 'Profile update failed', details: profileJson }) };
     }
 
-    // Add profile to chosen list
-    const relRes = await fetch(`https://a.klaviyo.com/api/lists/${LIST_ID}/relationships/profiles/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Klaviyo-API-Key ${KLAVIYO_KEY}`,
-        Accept: 'application/json',
-        revision: REVISION,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ data: [{ type: 'profile', id: profileJson.data.id }] })
-    });
-
-    if (!relRes.ok) {
-      const t = await relRes.text();
-      return { statusCode: relRes.status, headers: cors, body: JSON.stringify({ error: 'List add failed', details: t }) };
+   // Subscribe the profile to the list (sets EMAIL consent so flows can send)
+const subRes = await fetch('https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/', {
+  method: 'POST',
+  headers: {
+    Authorization: `Klaviyo-API-Key ${KLAVIYO_KEY}`,
+    Accept: 'application/json',
+    revision: REVISION,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    data: {
+      type: 'profile-subscription-bulk-create-job',
+      attributes: {
+        list_id: LIST_ID,
+        custom_source: 'drayishere.com',
+        subscriptions: [
+          {
+            channels: ['EMAIL'],
+            profile: {
+              data: {
+                type: 'profile',
+                id: profileJson.data.id // the id from the create/update call above
+              }
+            }
+          }
+        ]
+      }
     }
+  })
+});
 
-    return {
-      statusCode: 200,
-      headers: cors,
-      body: JSON.stringify({ ok: true, list: LIST_ID, profile: profileJson.data.id })
-    };
+if (!subRes.ok) {
+  const t = await subRes.text();
+  return {
+    statusCode: subRes.status,
+    headers: cors,
+    body: JSON.stringify({ error: 'Subscription failed', details: t })
+  };
+}
 
-  } catch (err) {
-    console.error('Function error:', err);
-    return { statusCode: 500, headers: cors, body: JSON.stringify({ error: 'Server error', details: err.message }) };
-  }
+return {
+  statusCode: 200,
+  headers: cors,
+  body: JSON.stringify({ ok: true, list: LIST_ID, profile: profileJson.data.id })
 };
+
