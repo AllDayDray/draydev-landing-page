@@ -145,112 +145,43 @@
     </div>
   </footer>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('growthForm');
-      if (!form) return;
+ script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('growthForm');
+    if (!form) return;
+    const nameEl = document.getElementById('name');
+    const emailEl = document.getElementById('email');
+    const btEl = document.getElementById('businessType');
 
-      const nameEl = document.getElementById('name');
-      const emailEl = document.getElementById('email');
-      const btEl = document.getElementById('businessType');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector('button[type="submit"]'); if (submitBtn) submitBtn.disabled = true;
 
-      function getUTMs() {
-        const p = new URLSearchParams(location.search);
-        return {
-          source: p.get('utm_source'),
-          medium: p.get('utm_medium'),
-          campaign: p.get('utm_campaign'),
-          content: p.get('utm_content'),
-          term: p.get('utm_term')
-        };
-      }
+      const name = (nameEl?.value || '').trim();
+      const email = (emailEl?.value || '').trim();
+      const businessType = (btEl?.value || '').trim();
+      if (!email || !businessType) { alert('Please enter your email and select your business type.'); if (submitBtn) submitBtn.disabled = false; return; }
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      const payload = {
+        list: 'bbb',
+        name, email,
+        businessType,
+        business_type: businessType
+      };
 
-        const submitBtn = form.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
-
-        const name = (nameEl?.value || '').trim();
-        const email = (emailEl?.value || '').trim();
-        const businessType = (btEl?.value || '').trim();
-
-        if (!email || !businessType) {
-          alert('Please enter your email and select your business type.');
-          if (submitBtn) submitBtn.disabled = false;
+      try {
+        const resp = await fetch('/.netlify/functions/klaviyo-subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await resp.json().catch(() => ({}));
+        if (resp.ok && data.ok) {
+          form.innerHTML = `<div style="text-align:center;background:#fff;padding:30px 25px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;border:1px solid #e5e7eb;"><h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">Thanks, ${name || 'friend'}! 🎉</h3><p style="color:#444;font-size:1rem;line-height:1.6;">You’re in. <strong>Check</strong> your inbox for ideas tailored to your <strong>${businessType}</strong> business.</p></div>`;
           return;
         }
-
-        // Build payload (send BOTH keys + force BBB routing)
-        const payload = {
-          list: 'bbb',                 // <— tells the function “this is BBB”
-          name,
-          email,
-          businessType,                // camelCase (new)
-          business_type: businessType, // snake_case (legacy segments)
-          source: 'Landing Page',
-          utm: getUTMs()
-        };
-
-        try {
-          const resp = await fetch('/.netlify/functions/klaviyo-subscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-
-          const text = await resp.text();
-          let data = {};
-          try { data = JSON.parse(text); } catch { }
-
-          if (resp.ok && data.ok === true) {
-            form.innerHTML = `
-            <div style="
-              text-align:center;background:#fff;padding:30px 25px;border-radius:16px;
-              box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;
-              border:1px solid #e5e7eb;">
-              <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">
-                Thanks, ${name ? name : 'friend'}! 🎉
-              </h3>
-              <p style="color:#444;font-size:1rem;line-height:1.6;">
-                You’re in. <strong>Check</strong> your inbox for ideas tailored to your
-                <strong>${businessType}</strong> business.
-              </p>
-            </div>`;
-            document.querySelector('html,body')?.scrollTo?.({ top: form.offsetTop - 40, behavior: 'smooth' });
-            return;
-          }
-
-          // Duplicate profile? Treat as success UX.
-          if (text.includes('duplicate_profile')) {
-            form.innerHTML = `
-            <div style="
-              text-align:center;background:#fff;padding:30px 25px;border-radius:16px;
-              box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;
-              border:1px solid #e5e7eb;">
-              <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">
-                You’re already on the list ✅
-              </h3>
-              <p style="color:#444;font-size:1rem;line-height:1.6;">
-                I’ll follow up with next steps shortly.
-              </p>
-            </div>`;
-            document.querySelector('html,body')?.scrollTo?.({ top: form.offsetTop - 40, behavior: 'smooth' });
-            return;
-          }
-
-          console.error('Subscribe error:', resp.status, text);
-          alert('Something went wrong subscribing you. Please try again.');
-          if (submitBtn) submitBtn.disabled = false;
-
-        } catch (err) {
-          console.error(err);
-          alert('Network error. Please try again.');
-          if (submitBtn) submitBtn.disabled = false;
-        }
-      });
+        alert('Something went wrong subscribing you. Please try again.'); if (submitBtn) submitBtn.disabled = false;
+      } catch (e) { alert('Network error. Please try again.'); if (submitBtn) submitBtn.disabled = false; }
     });
-  </script>
+  });
+</script>
+
 
 </body>
 
