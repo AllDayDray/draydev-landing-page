@@ -144,43 +144,91 @@
       
     </div>
   </footer>
-
- script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('growthForm');
-    if (!form) return;
-    const nameEl = document.getElementById('name');
-    const emailEl = document.getElementById('email');
-    const btEl = document.getElementById('businessType');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const submitBtn = form.querySelector('button[type="submit"]'); if (submitBtn) submitBtn.disabled = true;
-
-      const name = (nameEl?.value || '').trim();
-      const email = (emailEl?.value || '').trim();
-      const businessType = (btEl?.value || '').trim();
-      if (!email || !businessType) { alert('Please enter your email and select your business type.'); if (submitBtn) submitBtn.disabled = false; return; }
-
-      const payload = {
-        list: 'bbb',
-        name, email,
-        businessType,
-        business_type: businessType
-      };
-
+  <script>
+    (function () {
+      // Hard guard: if anything throws, we still prevent default
       try {
-        const resp = await fetch('/.netlify/functions/klaviyo-subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        const data = await resp.json().catch(() => ({}));
-        if (resp.ok && data.ok) {
-          form.innerHTML = `<div style="text-align:center;background:#fff;padding:30px 25px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;border:1px solid #e5e7eb;"><h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">Thanks, ${name || 'friend'}! 🎉</h3><p style="color:#444;font-size:1rem;line-height:1.6;">You’re in. <strong>Check</strong> your inbox for ideas tailored to your <strong>${businessType}</strong> business.</p></div>`;
-          return;
-        }
-        alert('Something went wrong subscribing you. Please try again.'); if (submitBtn) submitBtn.disabled = false;
-      } catch (e) { alert('Network error. Please try again.'); if (submitBtn) submitBtn.disabled = false; }
-    });
-  });
-</script>
+        const form = document.getElementById('growthForm');
+        if (!form) return;
+
+        const nameEl = document.getElementById('name');
+        const emailEl = document.getElementById('email');
+        const btEl = document.getElementById('businessType');
+
+        // absolutely prevent native submit no matter what
+        form.addEventListener('submit', (ev) => ev.preventDefault(), { capture: true });
+
+        form.addEventListener('submit', async function handleSubmit(e) {
+          e.preventDefault();
+
+          const submitBtn = form.querySelector('button[type="submit"]');
+          if (submitBtn) submitBtn.disabled = true;
+
+          const name = (nameEl && nameEl.value || '').trim();
+          const email = (emailEl && emailEl.value || '').trim();
+          const businessType = (btEl && btEl.value || '').trim();
+
+          if (!email || !businessType) {
+            alert('Please enter your email and select your business type.');
+            if (submitBtn) submitBtn.disabled = false;
+            return false;
+          }
+
+          const payload = {
+            list: 'bbb',
+            name, email,
+            businessType,
+            business_type: businessType // legacy key so your segments match
+          };
+
+          try {
+            const resp = await fetch('/.netlify/functions/klaviyo-subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+              redirect: 'manual' // avoid any weird redirects
+            });
+
+            let data = {};
+            try { data = await resp.json(); } catch (_) { }
+
+            if (resp.ok && data.ok === true) {
+              form.innerHTML = `
+              <div style="text-align:center;background:#fff;padding:30px 25px;border-radius:16px;
+                box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;border:1px solid #e5e7eb;">
+                <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">Thanks, ${name || 'friend'}! 🎉</h3>
+                <p style="color:#444;font-size:1rem;line-height:1.6;">
+                  You’re in. <strong>Check</strong> your inbox for ideas tailored to your
+                  <strong>${businessType}</strong> business.
+                </p>
+              </div>`;
+              return false;
+            }
+
+            if ((data && data.error) || resp.status >= 400) {
+              console.error('Subscribe error:', resp.status, data);
+              alert('Something went wrong subscribing you. Please try again.');
+              if (submitBtn) submitBtn.disabled = false;
+              return false;
+            }
+          } catch (err) {
+            console.error('Network/JS error:', err);
+            alert('Network error. Please try again.');
+            if (submitBtn) submitBtn.disabled = false;
+            return false;
+          }
+        });
+      } catch (fatal) {
+        // If something blows up before we attach, at least stop native submit
+        const f = document.getElementById('growthForm');
+        if (f) f.setAttribute('onsubmit', 'return false');
+        console.error('Fatal init error:', fatal);
+      }
+    })();
+  </script>
+
+
+
 
 
 </body>
