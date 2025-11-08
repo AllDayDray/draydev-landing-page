@@ -146,24 +146,13 @@
   </footer>
 
   <script>
-    (function () {
+    document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('growthForm');
+      if (!form) return;
+
       const nameEl = document.getElementById('name');
       const emailEl = document.getElementById('email');
       const btEl = document.getElementById('businessType');
-
-      // Optional: auto-select from ?type=restaurant, ?type=ecommerce, etc.
-      (function preselectFromQuery() {
-        const params = new URLSearchParams(location.search);
-        const type = (params.get('type') || '').toLowerCase();
-        if (!type) return;
-        for (const opt of btEl.options) {
-          if (opt.value && opt.textContent.toLowerCase().includes(type)) {
-            btEl.value = opt.value;
-            break;
-          }
-        }
-      })();
 
       function getUTMs() {
         const p = new URLSearchParams(location.search);
@@ -176,60 +165,19 @@
         };
       }
 
-      // --- Phone input: format + validate (US) ---
-      const phoneInput = document.getElementById('phone');
-      const phoneMsg = document.createElement('div');
-      phoneMsg.className = 'helper';
-      phoneInput.after(phoneMsg);
-
-      function digitsOnly(v) { return String(v).replace(/\D/g, ''); }
-      function formatUS(d) { // d = digits only (max 10)
-        d = d.slice(0, 10);
-        if (d.length < 4) return d;
-        if (d.length < 7) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
-        return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
-      }
-      function validUS(d) { // allow 10 digits (US) or 11 starting with 1
-        return d.length === 10 || (d.length === 11 && d.startsWith('1'));
-      }
-
-      phoneInput.addEventListener('input', () => {
-        const d = digitsOnly(phoneInput.value);
-        // Keep at most 11 digits typed; format first 10 for display
-        phoneInput.value = formatUS(d.slice(0, 10));
-        phoneMsg.textContent = '';
-      });
-
-      phoneInput.addEventListener('blur', () => {
-        const d = digitsOnly(phoneInput.value);
-        if (d && !validUS(d)) phoneMsg.textContent = 'Enter a valid 10-digit US number.';
-      });
-
-
-
-
-
-      form.addEventListener('submit', async function (e) {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const rawDigits = digitsOnly(form.phone.value);
-        if (form.phone.value && !validUS(rawDigits)) {
-          msg.textContent = 'Enter a valid 10-digit US number.';
-          submitBtn.disabled = false;
-          return;
-        }
-
-
         const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
 
-        const name = (nameEl.value || '').trim();
-        const email = (emailEl.value || '').trim();
-        const businessType = btEl.value;
+        const name = (nameEl?.value || '').trim();
+        const email = (emailEl?.value || '').trim();
+        const businessType = btEl?.value || '';
 
         if (!email || !businessType) {
           alert('Please enter your email and select your business type.');
-          submitBtn.disabled = false;
+          if (submitBtn) submitBtn.disabled = false;
           return;
         }
 
@@ -240,68 +188,74 @@
             body: JSON.stringify({
               name,
               email,
-              businessType,
-              source: 'Landing Page',
+              businessType,           // -> BBB segmentation
+              source: 'Landing Page', // helpful profile context
               utm: getUTMs()
             })
           });
 
           const text = await resp.text();
-          console.log('Subscribe response:', resp.status, text);
+          // Try parse; if not JSON, fall back
+          let data = {};
+          try { data = JSON.parse(text); } catch { }
 
-          if (!resp.ok || /"error":/.test(text)) {
-            if (text.includes('duplicate_profile')) {
-              alert('You’re already on the list — check your inbox!');
-              form.reset();
-            } else {
-              alert('Something went wrong subscribing you. Please try again.');
-              submitBtn.disabled = false;
-            }
+          if (resp.ok && (data.ok === true)) {
+            form.innerHTML = `
+            <div style="
+              text-align:center;
+              background:#fff;
+              padding:30px 25px;
+              border-radius:16px;
+              box-shadow:0 4px 15px rgba(0,0,0,0.08);
+              max-width:520px;
+              margin:0 auto;
+              border:1px solid #e5e7eb;">
+              <h3 style="font-size:1.4rem; font-weight:700; margin-bottom:10px;">
+                Thanks, ${name ? name : 'friend'}! 🎉
+              </h3>
+              <p style="color:#444; font-size:1rem; line-height:1.6;">
+                You’re in. Watch your inbox for ideas tailored to your
+                <strong>${businessType}</strong> business.
+              </p>
+            </div>`;
             return;
           }
 
+          // Duplicate profile? Treat as success UX.
+          if (text.includes('duplicate_profile')) {
+            form.innerHTML = `
+            <div style="
+              text-align:center;
+              background:#fff;
+              padding:30px 25px;
+              border-radius:16px;
+              box-shadow:0 4px 15px rgba(0,0,0,0.08);
+              max-width:520px;
+              margin:0 auto;
+              border:1px solid #e5e7eb;">
+              <h3 style="font-size:1.4rem; font-weight:700; margin-bottom:10px;">
+                You’re already on the list ✅
+              </h3>
+              <p style="color:#444; font-size:1rem; line-height:1.6;">
+                I’ll follow up with next steps shortly.
+              </p>
+            </div>`;
+            return;
+          }
 
-
-        
-
-          form.innerHTML = `
-  <div style="
-    text-align:center;
-    background:#fff;
-    padding:30px 25px;
-    border-radius:16px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.08);
-    max-width:500px;
-    margin:0 auto;
-    border:1px solid #e5e7eb;
-  ">
-    <h3 style="font-size:1.4rem; font-weight:700; margin-bottom:10px;">
-      Thanks, ${name ? name : 'friend'}! 🎉
-    </h3>
-    <p style="color:#444; font-size:1rem; line-height:1.6;">
-      Got your info! Keep an eye on your inbox — I’ll send a few ideas crafted just for your 
-      <strong>${businessType}</strong> business.
-    </p>
-    
-  </div>
-`;
-
-          try { if (typeof fbq === 'function') fbq('trackCustom', 'Lead', { businessType }); } catch (_) { }
-          try { if (window.gtag) gtag('event', 'lead', { businessType }); } catch (_) { }
-
-
-
-          // Optional: pixel conversion
-          try { if (typeof fbq === 'function') fbq('trackCustom', 'Lead', { businessType }); } catch (_) { }
-          try { if (window.gtag) gtag('event', 'lead', { businessType }); } catch (_) { }
-
-        } catch (error) {
+          console.error('Subscribe error:', resp.status, text);
           alert('Something went wrong subscribing you. Please try again.');
-          submitBtn.disabled = false;
+          if (submitBtn) submitBtn.disabled = false;
+
+        } catch (err) {
+          console.error(err);
+          alert('Network error. Please try again.');
+          if (submitBtn) submitBtn.disabled = false;
         }
       });
-    })();
+    });
   </script>
+
 
 
 
