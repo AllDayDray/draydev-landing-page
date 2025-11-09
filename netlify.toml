@@ -1,6 +1,7 @@
 [build]
-  publish = "."
-  functions = "netlify/functions"
+  publish = "."            # keep your current static publish dir
+  # (remove `functions = "netlify/functions"` here to avoid duplication)
 
 [functions]
+  directory = "netlify/functions"
   node_bundler = "esbuild"

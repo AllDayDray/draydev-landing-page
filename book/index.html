@@ -108,21 +108,18 @@
         <div class="divider"></div>
 
         <!-- Netlify-friendly static form + JS enhancement -->
-        <form id="lead-form" name="book-consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-          <input type="hidden" name="form-name" value="book-consultation" />
-          <p class="hidden">
-            <label>Don’t fill this out: <input name="bot-field" /></label>
-          </p>
-
+        <!-- REPLACE your current <form> ... </form> with this block -->
+        <form id="lead-form" method="POST" class="bbb-form" autocomplete="on" novalidate>
           <label for="name">Name</label>
           <input id="name" name="name" type="text" placeholder="Full name" required />
-
+        
           <label for="email">Email</label>
           <input id="email" name="email" type="email" placeholder="you@example.com" required />
-
+        
           <label for="phone">Phone Number</label>
-          <input id="phone" name="phone" inputmode="numeric" autocomplete="tel" type="tel" placeholder="(555) 555‑5555" maxlength="17"/>
-
+          <input id="phone" name="phone" inputmode="numeric" autocomplete="tel" type="tel" placeholder="(555) 555-5555"
+            maxlength="17" />
+        
           <label for="primary_need">Primary Need</label>
           <select id="primary_need" name="primary_need" required>
             <option value="" disabled selected>Select an option</option>
@@ -131,13 +128,14 @@
             <option>Email Template(s)</option>
             <option>Email Marketing</option>
           </select>
-
-          <div class="helper">No spam. Just a quick follow‑up with options.</div>
-
+        
+          <div class="helper">No spam. Just a quick follow-up with options.</div>
+        
           <div class="divider"></div>
           <button id="submitBtn" class="cta" type="submit">Book Your Free Consultation</button>
           <div id="msg" class="helper" role="status" aria-live="polite"></div>
         </form>
+
 
         <p class="note">Prefer to choose a time right now? <a href="https://calendly.com/thedraydev" target="_blank" rel="nofollow noopener"><span class="calendly">Open Calendly</span></a>.</p>
       </aside>
@@ -154,7 +152,8 @@
     const submitBtn = document.getElementById('submitBtn');
     const msg = document.getElementById('msg');
     const CALENDLY_REDIRECT = "https://calendly.com/thedraydev";
-    const KLAVIYO_ENDPOINT = "/.netlify/functions/klaviyo-subscribe";
+    const KLAVIYO_ENDPOINT = "/.netlify/functions/klaviyo-subscribe-freelance";
+
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
