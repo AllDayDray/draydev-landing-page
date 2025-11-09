@@ -146,14 +146,13 @@
     </footer>
   </div>
 
- <script>
+<script>
   document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('lead-form');
     const submitBtn = document.getElementById('submitBtn');
     const msg = document.getElementById('msg');
     const CALENDLY_REDIRECT = "https://calendly.com/thedraydev";
     const KLAVIYO_ENDPOINT = "/.netlify/functions/klaviyo-subscribe-freelance";
-
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -162,39 +161,51 @@
 
       const payload = {
         name: form.name.value.trim(),
-        email: form.email.value.trim(),
+        email: form.email.value.trim().toLowerCase(),
         phone: form.phone.value.trim(),
-        primary_need: form.primary_need.value,
-        list: 'freelance',
+        primary_need: form.primary_need.value
       };
 
       try {
-        console.log("Submitting to Klaviyo:", payload);
-
         const res = await fetch(KLAVIYO_ENDPOINT, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify(payload),
+          credentials: "same-origin"
         });
 
-        const data = await res.json();
-        console.log("Klaviyo response:", data);
+        // Try JSON first; fall back to text for HTML errors
+        let data;
+        const ct = res.headers.get("content-type") || "";
+        if (ct.includes("application/json")) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          console.warn("Non-JSON response:", text.slice(0, 400));
+          data = { ok: false, error: `Non-JSON response (${res.status})`, raw: text };
+        }
+
+        console.log("Submit → status:", res.status, "data:", data);
 
         if (res.ok && data.ok) {
           msg.textContent = "✅ Sent! Redirecting to Calendly...";
           window.location.href = CALENDLY_REDIRECT;
+        } else if (data.reason === "suppressed") {
+          msg.textContent = "This email is unsubscribed. I’ll follow up manually 👍";
+          submitBtn.disabled = false;
         } else {
-          msg.textContent = "⚠️ Submission failed. Please try again.";
+          msg.textContent = `⚠️ ${data.error || "Submission failed. Please try again."}`;
           submitBtn.disabled = false;
         }
       } catch (err) {
-        console.error("Error:", err);
-        msg.textContent = "❌ Something went wrong. Please try again or use Calendly directly.";
+        console.error("Submit error:", err);
+        msg.textContent = "❌ Network error. Try again or use Calendly.";
         submitBtn.disabled = false;
       }
     });
   });
 </script>
+
 
 </body>
 </html>
