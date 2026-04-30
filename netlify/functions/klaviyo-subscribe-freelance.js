@@ -2,7 +2,7 @@
 // Freelance endpoint — uses single Klaviyo key, handles duplicates, and subscribes to the Freelance Ads list.
 
 const KLAVIYO_KEY = process.env.KLAVIYO_PRIVATE_KEY;            // <- your single Klaviyo private API key (pk_...)
-const LIST_ID     = safeStr(process.env.KLAVIYO_LIST_ID_FREELANCE); // <- your Freelance Ads List ID (e.g. Xdb2pE)
+const LIST_ID     = safeStr(process.env.KLAVIYO_LIST_ID_FREELANCE); // <- your Freelance Ads List ID (e.g. U3nRjC)
 const REVISION    = '2024-10-15';                               // Klaviyo API revision header
 
 function safeStr(v) {
