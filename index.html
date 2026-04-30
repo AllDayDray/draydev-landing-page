@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="image card" content="https://drayishere.com/images/image-card.png" />
+  <meta name="twitter:image" content="https://drayishere.com/images/image-card.png" />
 
   <title>Dray Is Here</title>
-  <link rel="icon" href="/favicon.ico" />
 <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -44,21 +45,23 @@
       your business goals.</div> </p> 
     <div class="services">
       <div class="card">
-        <h3>Email Marketing</h3>
-        <p>Campaigns that nurture leads, boost retention, and drive revenue with precise targeting and automation.</p>
+        <h3>Lead Generation</h3>
+        <p>Automated & targeted outreach systems that help you find prospects, start conversations, and turn interest into booked
+        opportunities..</p>
       </div>
       <div class="card">
-        <h3>Email Design</h3>
-        <p>Beautiful, responsive emails designed to convert. Built to match your brand and engage your audience.</p>
+        <h3>Web Development</h3>
+        <p>Optimized websites that look great, load fast, and convert traffic into sales with proven UX
+          strategies.</p>
       </div>
       <div class="card">
         <h3>Landing Pages</h3>
         <p>Conversion-focused pages that capture leads and guide visitors toward the next step in your funnel.</p>
       </div>
       <div class="card">
-        <h3>Shopify Development</h3>
-        <p>Optimized Shopify stores that look great, load fast, and convert traffic into sales with proven UX
-          strategies.</p>
+        <h3>Email Marketing & Design</h3>
+        <p>Campaign strategy, automation, and responsive email design built to nurture leads, strengthen retention, and drive
+        revenue.</p>
       </div>
     </div>
   </section>
@@ -66,7 +69,7 @@
   <section class="why-us">
       <div class="why-header">
     <h2>Why Choose Me</h2>
-    <img src="images/Dray-Dev.png" alt="Dray Scott" class="profile-pic"/>
+    <img class="header-pic" src="images/Dray-Dev.png" alt="Dray Scott" class="profile-pic"/>
     </div>
     <div class="services">
       <div class="card">
@@ -105,14 +108,14 @@
   <section id="talk-growth" style="background:#f3f4f6;">
     <h2>Let’s Talk Growth</h2>
     <p style="max-width:600px; margin:10px auto 30px; color:#555;">
-      Tell us a bit about your business — and we’ll design a personalized strategy
+      Tell me a bit about your business, & I’ll design a personalized strategy
       to help you attract more clients and scale smarter.
     </p>
     <form id="growthForm"
       style="max-width:400px; margin:0 auto; background:#fff; padding:30px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="text" id="name" placeholder="First & Last Name" required />
       <input type="email" id="email" placeholder="Your Email" required />
-      <select id="businessType" required>
+      <select class="selections" id="businessType" required>
         <option value="">Select Your Business Type</option>
         <option value="Local Service Provider">Local Service Provider</option>
         <option value="Health & Wellness">Health & Wellness</option>
@@ -135,7 +138,7 @@
 
   <footer id="contact"> 
     <p><a href="https://www.draydev.com/" target="_blank">Dray Scott</a>   </p>
-    <div id="rights">© 2025 All rights reserved.</div>
+    <div id="rights">©2025. All rights reserved.</div>
     <div class="footer-links">
       <a href="#home">Home</a>•
       <a href="https://www.draydev.com/" target="_blank">Portfolio</a>
@@ -173,7 +176,7 @@
         const resp = await fetch('/.netlify/functions/klaviyo-subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         const data = await resp.json().catch(() => ({}));
         if (resp.ok && data.ok) {
-          form.innerHTML = `<div style="text-align:center;background:#fff;padding:30px 25px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;border:1px solid #e5e7eb;"><h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">Thanks, ${name || 'friend'}! 🎉</h3><p style="color:#444;font-size:1rem;line-height:1.6;">You’re in. <strong>Check</strong> your inbox for ideas tailored to your <strong>${businessType}</strong> business.</p></div>`;
+          form.innerHTML = `<div style="text-align:center;background:#fff;padding:30px 25px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.08);max-width:520px;margin:0 auto;border:1px solid #e5e7eb;"><h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">Thanks, ${name || 'friend'}! 🎉</h3><p style="color:#444;font-size:1rem;line-height:1.6;">You’re in. <strong>Check</strong> your inbox for ideas tailored to your <strong>${businessType}</strong> business.   </p><strong>Check promo & spam inbox if not in primary.</strong></div>`;
           return;
         }
         alert('Something went wrong subscribing you. Please try again.'); if (submitBtn) submitBtn.disabled = false;

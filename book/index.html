@@ -4,6 +4,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="image card" content="https://drayishere.com/images/image-card.png" />
+  <meta name="twitter:image" content="https://drayishere.com/images/image-card.png" />
+
   <title>Book Your Free Consultation | Dray Dev</title>
   <meta name="description"
     content="Websites, landing pages, and email marketing built to fit your budget. Watch the intro video and book a free consultation." />
@@ -58,7 +61,7 @@
     body {
       margin: 0;
       padding: 0;
-      background: var(--bg);
+      background: #e0e0e0;
       color: var(--dark);
       font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif
     }
@@ -96,7 +99,9 @@
 
     .logo {
       font-weight: 800;
-      letter-spacing: .3px
+      letter-spacing: .3px;
+      padding-left: 20px;
+
     }
 
     .logo a {
@@ -219,6 +224,11 @@
       box-shadow: 0 0 0 4px rgba(242, 205, 75, .15)
     }
 
+    .selections {
+      color: #000;
+      font-weight: bold;
+    }
+
     .cta {
       display: inline-flex;
       align-items: center;
@@ -299,12 +309,14 @@
         <p class="sub">Websites, landing pages, & email systems built for small businesses. <span class="sub">Without
             the big-agency price tag.</span></p>
         <div class="video-wrap" aria-label="Intro video">
-          <iframe
-            src="https://www.youtube.com/embed/jTAgau867Jk?si=H9jXF2CRydZUGP2x&autoplay=1&mute=1&loop=1&playlist=jTAgau867Jk"
+          <iframe src="https://www.youtube.com/embed/jTAgau867Jk?si=H9jXF2CRydZUGP2x&loop=1&playlist=jTAgau867Jk"
             title="Intro"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+          </iframe>
         </div>
+
+
         <div class="trust">
           <span class="pill">No pressure</span>
           <span class="pill">Budget-friendly options</span>
@@ -330,8 +342,9 @@
             maxlength="17" />
 
           <label for="primary_need">Primary Need</label>
-          <select id="primary_need" name="primary_need" required>
+          <select class="selections" id="primary_need" name="primary_need" required>
             <option value="" disabled selected>Select an option</option>
+            <option>Lead Generation</option>
             <option>New or Updated Website</option>
             <option>Landing Page</option>
             <option>Email Template(s)</option>
@@ -350,75 +363,74 @@
     </section>
 
     <footer>
-      <p>© 2025</p>
-      <div id="portfolio"><a href="https://www.draydev.com/" target="_blank">Dray Scott</a></div>
-      <div>All Rights Reserved.</div>
+      <p id="portfolio"><a href="https://www.draydev.com/" target="_blank">Dray Scott</a></p>
+      <p>©2025. All rights reserved.</p>
     </footer>
   </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('lead-form');
-    const submitBtn = document.getElementById('submitBtn');
-    const msg = document.getElementById('msg');
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('lead-form');
+      const submitBtn = document.getElementById('submitBtn');
+      const msg = document.getElementById('msg');
 
-    // ✅ Absolute URL removes any ambiguity with base paths or redirects
-    const KLAVIYO_ENDPOINT = "https://drayishere.com/.netlify/functions/klaviyo-subscribe-freelance";
-    const CALENDLY_REDIRECT = "https://calendly.com/thedraydev";
+      // ✅ Absolute URL removes any ambiguity with base paths or redirects
+      const KLAVIYO_ENDPOINT = "https://drayishere.com/.netlify/functions/klaviyo-subscribe-freelance";
+      const CALENDLY_REDIRECT = "https://calendly.com/thedraydev";
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      msg.textContent = "";
-      submitBtn.disabled = true;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        msg.textContent = "";
+        submitBtn.disabled = true;
 
-      // ✅ ALWAYS read via form.elements to avoid name collisions
-      const f = form.elements;
-      const payload = {
-        name: (f.namedItem('name')?.value || '').trim(),
-        email: (f.namedItem('email')?.value || '').trim().toLowerCase(),
-        phone: (f.namedItem('phone')?.value || '').trim(),
-        primary_need: (f.namedItem('primary_need')?.value || '').trim()
-      };
+        // ✅ ALWAYS read via form.elements to avoid name collisions
+        const f = form.elements;
+        const payload = {
+          name: (f.namedItem('name')?.value || '').trim(),
+          email: (f.namedItem('email')?.value || '').trim().toLowerCase(),
+          phone: (f.namedItem('phone')?.value || '').trim(),
+          primary_need: (f.namedItem('primary_need')?.value || '').trim()
+        };
 
-      try {
-        const res = await fetch(KLAVIYO_ENDPOINT, {
-          method: "POST",
-          mode: "cors",
-          headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify(payload),
-          credentials: "include"
-        });
+        try {
+          const res = await fetch(KLAVIYO_ENDPOINT, {
+            method: "POST",
+            mode: "cors",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify(payload),
+            credentials: "include"
+          });
 
-        let data, raw;
-        const ct = res.headers.get("content-type") || "";
-        if (ct.includes("application/json")) {
-          data = await res.json();
-        } else {
-          raw = await res.text();
-          data = { ok: false, error: `Non-JSON response (${res.status})`, raw };
-          console.warn("Non-JSON response:", raw);
-        }
+          let data, raw;
+          const ct = res.headers.get("content-type") || "";
+          if (ct.includes("application/json")) {
+            data = await res.json();
+          } else {
+            raw = await res.text();
+            data = { ok: false, error: `Non-JSON response (${res.status})`, raw };
+            console.warn("Non-JSON response:", raw);
+          }
 
-        console.log("Submit →", { status: res.status, data, payload });
+          console.log("Submit →", { status: res.status, data, payload });
 
-        if (res.ok && data.ok) {
-          msg.textContent = "✅ Sent! Redirecting to Calendly...";
-          window.location.href = CALENDLY_REDIRECT;
-        } else if (data?.reason === "suppressed") {
-          msg.textContent = "This email is unsubscribed. I’ll follow up manually 👍";
+          if (res.ok && data.ok) {
+            msg.textContent = "✅ Sent! Redirecting to Calendly...";
+            window.location.href = CALENDLY_REDIRECT;
+          } else if (data?.reason === "suppressed") {
+            msg.textContent = "This email is unsubscribed. I’ll follow up manually 👍";
+            submitBtn.disabled = false;
+          } else {
+            msg.textContent = `⚠️ ${data?.error || "Submission failed. Please try again."}`;
+            submitBtn.disabled = false;
+          }
+        } catch (err) {
+          console.error("Submit error:", err);
+          msg.textContent = "❌ Network error. Try again or use Calendly.";
           submitBtn.disabled = false;
-        } else {
-          msg.textContent = `⚠️ ${data?.error || "Submission failed. Please try again."}`;
-          submitBtn.disabled = false;
         }
-      } catch (err) {
-        console.error("Submit error:", err);
-        msg.textContent = "❌ Network error. Try again or use Calendly.";
-        submitBtn.disabled = false;
-      }
+      });
     });
-  });
-</script>
+  </script>
 
 
 </body>

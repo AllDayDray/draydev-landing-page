@@ -48,8 +48,9 @@ button {
 button:hover {
   background-color: #d90101;
   color: black;
-  transform: translateY(-2px);
-}
+  transform: translateY(-2px); 
+  }
+
 
 .btn-secondary {
   background-color: #1e40af;
@@ -63,15 +64,13 @@ button:hover {
 .profile-pic {
   width: 420px;
   height: 420px;
-  object-fit: conver;
+  object-fit: cover;
   border-radius: 10%;
   display: block;
   margin: 0 auto 40px;
   background: transparent;
   max-width: 100%;
   height: auto;
-
-
 }
 
 .services,
@@ -105,6 +104,12 @@ section#how-it-works {
 
 section#how-it-works h2 {
   color: black;
+}
+
+.selections{
+  color: #000;
+  font-weight: bold;
+  background-color: #fff;
 }
 
 
@@ -143,9 +148,10 @@ footer a {
 
 
 .footer-links a:hover{
-transition: 0.3s;
   color: #fff;
-}
+  transition: color 0.2s ease-in-out;
+  }
+
 
 #contact p a{
   color:#6b7280;
@@ -154,8 +160,9 @@ transition: 0.3s;
 
 #contact p a:hover{
   color: #f2cd4b;
-  transition: 0.3s;
-}
+  transition: color 0.2s ease-in-out;
+  }
+
 
 #rights {
   color: #6b7280;
@@ -192,6 +199,7 @@ nav {
 .nav-links a:hover {
 
   color: #d90101;
+transition: color 0.2s ease-in-out;
 }
 
 .header-link a {
@@ -201,7 +209,8 @@ nav {
 
 .header-link a:hover {
   color: #d90101;
-}
+  transition: color 0.2s ease-in-out;
+  }
 
 
 .hamburger {
@@ -224,10 +233,26 @@ nav {
   .profile-pic {
     width: 160px;
   }
+
+  .header-pic {
+    width: 100%;
+  }
+
+  footer{
+    width: 100%;
+  }
 }
 
 
 @media (max-width:768px) {
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+
   .nav-links {
     display: none;
     position: absolute;
