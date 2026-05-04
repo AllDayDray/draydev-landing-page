@@ -1,4 +1,7 @@
-
+html,
+body {
+  overflow-x: hidden;
+}
 
 body {
   font-family: 'Inter', Arial, sans-serif;
@@ -324,7 +327,7 @@ transition: color 0.2s ease-in-out;
 
 
 @media (max-width:768px) {
-
+  
   input,
   select,
   textarea {
