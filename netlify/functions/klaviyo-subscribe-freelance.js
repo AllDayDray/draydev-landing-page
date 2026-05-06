@@ -101,12 +101,12 @@ exports.handler = async (event) => {
             phone_number: phone || undefined,
 
             subscriptions: {
-              email: {
-                marketing: {
-                  consent: "SUBSCRIBED"
-                }
+            email: {
+              marketing: {
+                consent: "SUBSCRIBED"
               }
-            },
+            }
+          },
 
             subscriptions: {
               email: {
