@@ -100,21 +100,6 @@ exports.handler = async (event) => {
             first_name: name || undefined,
             phone_number: phone || undefined,
 
-            subscriptions: {
-            email: {
-              marketing: {
-                consent: "SUBSCRIBED"
-              }
-            }
-          },
-
-            subscriptions: {
-              email: {
-                marketing: {
-                  consent: "SUBSCRIBED"
-                }
-              }
-            },
 
             properties: {
               ...(primaryNeed ? { primaryNeed } : {}),
@@ -200,21 +185,57 @@ exports.handler = async (event) => {
     }
 
     // --- 3) Subscribe to the Freelance Ads list (triggers flow) ---
-    const addRes = await fetch(`https://a.klaviyo.com/api/lists/${LIST_ID}/relationships/profiles/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Klaviyo-API-Key ${KLAVIYO_KEY}`,
-        Accept: 'application/json',
-        revision: REVISION,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ data: [{ type: 'profile', id: String(profileId) }] })
-    });
+ // --- 3) Subscribe profile + add to list ---
+const subRes = await fetch(
+  'https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/',
+  {
+    method: 'POST',
+    headers: {
+      Authorization: `Klaviyo-API-Key ${KLAVIYO_KEY}`,
+      Accept: 'application/json',
+      revision: REVISION,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      data: {
+        type: 'profile-subscription-bulk-create-job',
+        attributes: {
+          custom_source: 'Website Form',
+          profiles: {
+            data: [
+              {
+                type: 'profile',
+                id: String(profileId)
+              }
+            ]
+          }
+        },
+        relationships: {
+          list: {
+            data: {
+              type: 'list',
+              id: LIST_ID
+            }
+          }
+        }
+      }
+    })
+  }
+);
 
-    if (!addRes.ok) {
-      const t = await addRes.text().catch(() => '');
-      return { statusCode: addRes.status, headers: cors, body: JSON.stringify({ ok: false, error: 'Add to list failed', details: t }) };
-    }
+if (!subRes.ok) {
+  const t = await subRes.text().catch(() => '');
+
+  return {
+    statusCode: subRes.status,
+    headers: cors,
+    body: JSON.stringify({
+      ok: false,
+      error: 'Subscription job failed',
+      details: t
+    })
+  };
+}
 
     return { statusCode: 200, headers: cors, body: JSON.stringify({ ok: true, list: LIST_ID, profile: profileId, subscribed: true }) };
   } catch (err) {
