@@ -203,10 +203,13 @@ const subRes = await fetch(
           custom_source: 'Website Form',
           profiles: {
             data: [
-              {
-                type: 'profile',
-                id: String(profileId)
+            {
+              type: 'profile',
+              id: String(profileId),
+              attributes: {
+                email
               }
+            }
             ]
           }
         },
