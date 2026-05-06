@@ -98,11 +98,13 @@ exports.handler = async (event) => {
           attributes: {
             email,
             first_name: name || undefined,
-            phone_number: phone || undefined,
+            // phone_number: phone || undefined,
 
 
-            properties: {
+              properties: {
               ...(primaryNeed ? { primaryNeed } : {}),
+              ...(bodyObj.phone ? { phone_raw: safeStr(bodyObj.phone) } : {}),
+              ...(phone ? { phone_e164: phone } : {}),
               source: 'Freelance Ad Form'
             }
           }
@@ -151,11 +153,13 @@ exports.handler = async (event) => {
             id: profileId,
             attributes: {
               first_name: name || undefined,
-              phone_number: phone || undefined,
+              // phone_number: phone || undefined,
               properties: {
-                ...(primaryNeed ? { primaryNeed } : {}),
-                source: 'Freelance Ad Form'
-              }
+              ...(primaryNeed ? { primaryNeed } : {}),
+              ...(bodyObj.phone ? { phone_raw: safeStr(bodyObj.phone) } : {}),
+              ...(phone ? { phone_e164: phone } : {}),
+              source: 'Freelance Ad Form'
+            }
             }
           }
         })
