@@ -99,6 +99,23 @@ exports.handler = async (event) => {
             email,
             first_name: name || undefined,
             phone_number: phone || undefined,
+
+            subscriptions: {
+              email: {
+                marketing: {
+                  consent: "SUBSCRIBED"
+                }
+              }
+            },
+
+            subscriptions: {
+              email: {
+                marketing: {
+                  consent: "SUBSCRIBED"
+                }
+              }
+            },
+
             properties: {
               ...(primaryNeed ? { primaryNeed } : {}),
               source: 'Freelance Ad Form'
